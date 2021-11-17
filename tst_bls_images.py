@@ -13,7 +13,7 @@ import argparse
 
 import numpy as np
 
-from bls.BroadLearningSystem import BLS, BLS_AddEnhanceNodes, BLS_AddFeatureEnhanceNodes
+from bls.AdaptiveBLS import AdaptiveBLS
 import xlwt
 from mycode.utils.writeExcel import *
 
@@ -35,6 +35,8 @@ def main(hparams):
     trainlabel = np.load("tensorboard_logs_GIM/{ds}/trainlabel.npy".format(ds=dslist))
     testdata = np.load("tensorboard_logs_GIM/{ds}/testdata.npy".format(ds=dslist))
     testlabel = np.load("tensorboard_logs_GIM/{ds}/testlabel.npy".format(ds=dslist))
+    validata = np.load("tensorboard_logs_GIM/{ds}/testdata.npy".format(ds=dslist))
+    valilabel = np.load("tensorboard_logs_GIM/{ds}/testlabel.npy".format(ds=dslist))
     print(dslist * 10)
     bls(traindata, trainlabel, testdata, testlabel)
 
@@ -48,24 +50,7 @@ def bls(traindata, trainlabel, testdata, testlabel):
     s = 0.9 # 0.8  # shrink coefficient
     C = 2 ** -30  # Regularization coefficient
 
-    print('-------------------BLS_BASE---------------------------')
-    Basic_container, B_Cm = BLS(traindata, trainlabel, testdata, testlabel, s, C, N1, N2, N3)
-    print('-------------------BLS_ENHANCE------------------------')
-    E_container, E_Cm = BLS_AddEnhanceNodes(traindata, trainlabel, testdata, testlabel, s, C, N1, N2, N3, L, M1)
-    print('-------------------BLS_FEATURE&ENHANCE----------------')
-    M2 = 5  # # of adding feature mapping nodes
-    M3 = 7  # # of adding enhance nodes
-    F_container, F_Cm = BLS_AddFeatureEnhanceNodes(traindata, trainlabel, testdata, testlabel, s, C, N1, N2, N3, L, M1, M2, M3)
-
-    # write to excel
-    workbook = xlwt.Workbook(encoding='utf-8')
-    worksheet = workbook.add_sheet('Basic')
-    excelWriting_Classfy(worksheet,Basic_container,B_Cm)
-    worksheet2 = workbook.add_sheet('Enhance')
-    excelWriting_Classfy(worksheet2, E_container, E_Cm)
-    worksheet3 = workbook.add_sheet('Feature')
-    excelWriting_Classfy(worksheet3, F_container, F_Cm)
-    workbook.save('./tensorboard_logs_GIM/t4.xls')
+    A_container, A_Cm = AdaptiveBLS(traindata, trainlabel,  testdata, testlabel, validata, valilabel, s, C, N1, N2, N3, L, M1, M2, M3)
 
     print('-------------------END---------------------------')
 
