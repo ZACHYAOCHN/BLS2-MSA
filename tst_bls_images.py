@@ -41,9 +41,9 @@ def main(hparams):
     L1 = 50
     L2 = 50
     # for train
-    bls(traindata, trainlabel, validata, valilabel,L1,L2)
+    bls(traindata, trainlabel, validata, valilabel,L1,L2, 1)
     # for test
-    # bls(traindata, trainlabel, testdata, testlabel,L1,L2)
+    # bls(traindata, trainlabel, testdata, testlabel,L1,L2, 0)
     
 def bls(traindata, trainlabel, testdata, testlabel,L1, L2):
     #
