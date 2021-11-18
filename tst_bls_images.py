@@ -13,7 +13,7 @@ import argparse
 
 import numpy as np
 
-from bls.AdaptiveBLS import AdaptiveBLS
+from bls.AdaptiveBLS_s import AdaptiveBLS_s
 import xlwt
 from mycode.utils.writeExcel import *
 
@@ -38,19 +38,23 @@ def main(hparams):
     validata = np.load("tensorboard_logs_GIM/{ds}/testdata.npy".format(ds=dslist))
     valilabel = np.load("tensorboard_logs_GIM/{ds}/testlabel.npy".format(ds=dslist))
     print(dslist * 10)
-    bls(traindata, trainlabel, testdata, testlabel)
-
-def bls(traindata, trainlabel, testdata, testlabel):
+    L1 = 50
+    L2 = 50
+    # for train
+    bls(traindata, trainlabel, validata, valilabel,L1,L2)
+    # for test
+    # bls(traindata, trainlabel, testdata, testlabel,L1,L2)
+    
+def bls(traindata, trainlabel, testdata, testlabel,L1, L2):
     #
     N1 = 5  # # of nodes belong to each window
     N2 = 5  # # of windows -------Feature mapping layer
     N3 = 5 # # of enhancement nodes -----Enhance layer
-    L = 20  # # of incremental steps
     M1 = 20  # # of adding enhance nodes
     s = 0.9 # 0.8  # shrink coefficient
     C = 2 ** -30  # Regularization coefficient
 
-    A_container, A_Cm = AdaptiveBLS(traindata, trainlabel,  testdata, testlabel, validata, valilabel, s, C, N1, N2, N3, L, M1, M2, M3)
+    train_container, train_Cm = AdaptiveBLS_s(traindata, trainlabel,  validata, valilabel, s, C, N1, N2, N3, L1, L2, M1, M2, M3)
 
     print('-------------------END---------------------------')
 
